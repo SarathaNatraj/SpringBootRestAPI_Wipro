@@ -1,5 +1,5 @@
 # Stage 1: Build the application
-FROM maven:3.8.1-jdk-11 AS builder
+FROM maven:3.8.1-openjdk-17 AS builder
 
 # Set the working directory inside the container
 WORKDIR /app
