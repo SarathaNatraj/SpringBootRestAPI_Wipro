@@ -1,26 +1,28 @@
-# Use the official OpenJDK image as a base image
-FROM openjdk:17-jdk-alpine
+# Stage 1: Build the application
+FROM maven:3.8.1-jdk-11 AS builder
 
-git clone https://github.com/jenkinsci/docker
+# Set the working directory inside the container
+WORKDIR /app
 
-cd docker 
+# Copy the pom.xml and download dependencies
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
 
-git checkout 587b2856cd225bb152c4abeeaaa24934c75aa460  # Switch to the version you mentioned in the question.
+# Copy the rest of the application source code and build the application
+COPY src ./src
+RUN mvn clean package -DskipTests
 
-docker build -t jenkins-k8s .
+# Stage 2: Create the runtime image
+FROM openjdk:11-jre-slim
 
+# Set the working directory inside the container
+WORKDIR /app
 
-# Add a volume pointing to /tmp
-VOLUME /tmp
+# Copy the built jar file from the build stage
+COPY --from=builder /app/target/*.jar app.jar
 
-# Make port 9090 available to the world outside this container
-EXPOSE 9090
+# Expose the application port
+EXPOSE 8090
 
-# The application's jar file
-ARG JAR_FILE=target/demo-0.0.1-SNAPSHOT.jar
-
-# Add the application's jar to the container
-ADD ${JAR_FILE} app.jar
-
-# Run the jar file
-ENTRYPOINT ["java","-jar","/app.jar"]
+# Define the entrypoint to run the application
+ENTRYPOINT ["java", "-jar", "app.jar"]
