@@ -8,3 +8,4 @@ services:
       - "8090:9090"
     environment:
       - SPRING_PROFILES_ACTIVE=prod
+   container_name: spring-boot-container
