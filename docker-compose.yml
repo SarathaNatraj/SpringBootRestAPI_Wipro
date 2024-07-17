@@ -1,11 +1,39 @@
-
+version: '3.8'
 
 services:
-  spring-boot-app:
-    build:
-      context: .
-    ports:
-      - "8090:9090"
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
-   container_name: spring-boot-container
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: restdemoapi
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - springboot-network
+
+  springbootweb:
+    build: .
+    container_name: springbootweb
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: restdemoapi
+      MYSQL_USER: root
+      MYSQL_PASSWORD: oot
+    ports:
+      - "8080:9092"
+    depends_on:
+      - mysql
+    networks:
+      - springboot-network
+
+networks:
+  springboot-network:
+
+volumes:
+  mysql-data:
