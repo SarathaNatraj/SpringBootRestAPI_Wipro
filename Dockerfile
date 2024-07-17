@@ -19,7 +19,7 @@ FROM openjdk:17
 WORKDIR /app
 
 # Copy the built jar file from the build stage
-COPY --from=builder /app/target/*.jar app.jar
+COPY --from=builder /app/target/*.jar springbootrestapi.jar
 
 # Expose the application port
 EXPOSE 8090
