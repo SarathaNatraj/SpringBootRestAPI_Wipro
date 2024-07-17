@@ -22,7 +22,7 @@ WORKDIR /app
 COPY --from=builder /app/target/*.jar springbootrestapi.jar
 
 # Expose the application port
-EXPOSE 8090
+EXPOSE 9002
 
 # Define the entrypoint to run the application
 ENTRYPOINT ["java", "-jar", "springbootrestapi.jar"]
